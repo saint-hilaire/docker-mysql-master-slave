@@ -1,0 +1,15 @@
+  mysql_slave{{ slave_nr }}:
+    image: mysql:5.7
+    env_file:
+      - ./slave{{ slave_nr }}/mysql_slave.env
+    container_name: "mysql_slave{{ slave_nr }}"
+    restart: "no"
+    ports:
+      - {{ external_port_nr }}:3306
+    depends_on:
+      - mysql_master
+    volumes:
+      - ./slave{{ slave_nr }}/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+      - ./slave{{ slave_nr }}/data:/var/lib/mysql
+    networks:
+      - overlay

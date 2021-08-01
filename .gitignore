@@ -1,3 +1,7 @@
 .DS_Store
 .idea
 data
+slave[0-9]
+./docker-compose.yml
+__pycache__
+master
