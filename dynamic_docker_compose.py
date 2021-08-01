@@ -54,9 +54,9 @@ def prep_slave_dir(slave_nr, database_name):
     slave_nr_str = str(slave_nr)
     slave_dir = "./slave"+slave_nr_str
     os.system("cp -r ./slave " + slave_dir)
-    os.system("rm " + slave_dir+"/conf/mysql.conf.cnf.j2")
     with open("./slave/conf/mysql.conf.cnf.j2", "r") as template_conf_fh:
         slave_tpl = template_conf_fh.read()
+    os.system("rm " + slave_dir+"/conf/mysql.conf.cnf.j2")
 
     slave_conf_fh = open(slave_dir+"/conf/mysql.conf.cnf", "w")
     slave_data = {
@@ -67,6 +67,19 @@ def prep_slave_dir(slave_nr, database_name):
     slave_conf_str = j2_tpl.render(slave_data)
     slave_conf_fh.write(slave_conf_str)
     slave_conf_fh.close()
+
+    with open("./slave/mysql_slave.env.j2", "r") as template_env_fh:
+        slave_env_tpl = template_env_fh.read()
+    os.system("rm " + slave_dir+"/mysql_slave.env.j2")
+    slave_env_fh = open(slave_dir+"/mysql_slave.env", "w")
+    slave_data = {
+            "database_name": database_name
+    }
+    j2_tpl = Template(slave_env_tpl)
+    slave_env_str = j2_tpl.render(slave_data)
+    slave_env_fh.write(slave_env_str)
+    slave_env_fh.close()
+
 
 def do_all_dirs(nr_of_slaves, database_name):
     os.system("rm -r ./slave[0-9]")
