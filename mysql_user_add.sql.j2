@@ -1,0 +1,5 @@
+DROP USER '{{ username }}'@'{{ host }}';
+FLUSH PRIVILEGES;
+CREATE USER '{{ username }}'@'{{ host }}' IDENTIFIED BY '{{ password }}';
+GRANT {{ privileges }} on *.* TO '{{ username }}'@'{{ host }}';
+FLUSH PRIVILEGES;
