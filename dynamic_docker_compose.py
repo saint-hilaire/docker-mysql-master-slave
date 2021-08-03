@@ -85,7 +85,7 @@ def prep_slave_dir(slave_nr, root_password, database_name, database_user, databa
 
 
 def do_all_dirs(nr_of_slaves, root_password, database_name, database_user, database_password):
-    os.system("rm -r ./slave[0-9]")
+    os.system("rm -r ./slave[0-9]*")
     for i in range(1, nr_of_slaves + 1):
         prep_slave_dir(i, root_password, database_name, database_user, database_password)
 
