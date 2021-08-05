@@ -1,5 +1,7 @@
   mysql_slave{{ slave_nr }}:
     image: mysql:5.7
+    depends_on: 
+      - mysql_master
     env_file:
       - ./slave{{ slave_nr }}/mysql_slave.env
     container_name: "mysql_slave{{ slave_nr }}"
