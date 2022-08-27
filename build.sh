@@ -38,7 +38,7 @@ fi
 
 ./dynamic_docker_compose.py -R $database_root_password -r $slave_root_password -d $database_name -n $number_of_slaves -U $master_database_user -P $master_database_password -u $slave_database_user -p $slave_database_password
 
-docker-compose down
+docker-compose down -v
 rm -rf ./master/data/*
 rm -rf ./slave/data/*
 docker-compose build
@@ -61,15 +61,12 @@ do
 	    sleep 4
 	done
 
-	docker-ip() {
-	    docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$@"
-	}
 
 	MS_STATUS=`docker exec mysql_master sh -c "export MYSQL_PWD=$database_root_password; mysql -u root -e \"SHOW MASTER STATUS\""`
 	CURRENT_LOG=`echo $MS_STATUS | awk '{print $6}'`
 	CURRENT_POS=`echo $MS_STATUS | awk '{print $7}'`
 
-	start_slave_stmt="CHANGE MASTER TO MASTER_HOST='$(docker-ip mysql_master)',MASTER_USER='$slave_database_user',MASTER_PASSWORD='$slave_database_password',MASTER_LOG_FILE='$CURRENT_LOG',MASTER_LOG_POS=$CURRENT_POS; START SLAVE;"
+	start_slave_stmt="CHANGE MASTER TO MASTER_HOST='mysql_master',MASTER_USER='$slave_database_user',MASTER_PASSWORD='$slave_database_password',MASTER_LOG_FILE='$CURRENT_LOG',MASTER_LOG_POS=$CURRENT_POS; START SLAVE;"
 	start_slave_cmd="export MYSQL_PWD=$slave_root_password; mysql -u root -e \""
 	start_slave_cmd+="$start_slave_stmt"
 	start_slave_cmd+='"'
